@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './bubble-chart.css';
+import './bubble-chart.css';
 import { select, event } from 'd3-selection';
 import { scaleLog } from 'd3-scale';
 import { max, min } from 'd3-array';
@@ -16,14 +16,26 @@ import { drag } from 'd3-drag';
 import { interpolate } from 'd3-interpolate';
 import { transition } from 'd3-transition';
 
-const WIDTH = 1200;
-const HEIGHT = 850;
-
 class BubbleChart extends Component {
+  constructor() {
+    super();
+    this.state = {
+      width: window.innerWidth,
+      height: window.innerHeight - 100,
+    };
+    this.handleResize = this.handleResize.bind(this);
+  }
   componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
     this.drawChart();
   }
 
+  handleResize(WindowSize, event) {
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight - 50,
+    });
+  }
   componentDidUpdate() {
     this.drawChart();
   }
@@ -109,17 +121,6 @@ class BubbleChart extends Component {
         return parseFloat(d.percent_change_24h) > 0 ? '#07BEB8' : '#25283D';
       });
 
-    // circles
-    //   .transition()
-    //   .duration(500)
-    //   .attrTween('r', function(d) {
-    //     let radius = rScale(d.market_cap_usd);
-    //     var i = interpolate(0, radius);
-    //     return function(t) {
-    //       return (radius = i(t));
-    //     };
-    //   });
-
     node
       .append('text')
       .attr('dy', function(d) {
@@ -138,12 +139,13 @@ class BubbleChart extends Component {
   }
 
   render() {
+    const { width, height } = this.state;
     return (
-      <div className={styles.chartContainer}>
-        <svg width={WIDTH} height={HEIGHT} ref="svg">
+      <div className="chartContainer">
+        <svg width={width} height={height} ref="svg">
           <g
             style={{
-              transform: `translate(${WIDTH / 2}px , ${HEIGHT / 2}px)`,
+              transform: `translate(${width / 2}px , ${height / 2}px)`,
             }}
             ref="circleContainer"
           />
