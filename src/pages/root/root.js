@@ -21,7 +21,7 @@ class Root extends Component {
   }
   componentDidMount() {
     this.getData();
-    this.interval = setInterval(this.getData, 1000 * 60);
+    // this.interval = setInterval(this.getData, 1000 * 60);
   }
 
   componentWillUnmount() {
