@@ -3,6 +3,10 @@
   font-family: 'Fjalla One', sans-serif;
 }
 
+.rootContent {
+  position: relative;
+}
+
 .RootHeadline {
   text-transform: uppercase;
   color: #25283d;
@@ -15,6 +19,23 @@
 
 .RootSubHeadline {
   color: #25283d;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  color: #25283d;
+}
+
+.button {
+  border: 1px solid #25283d;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.button.active {
+  background-color: #25283d;
+  color: white;
 }
 
 .footer {

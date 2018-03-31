@@ -1,0 +1,73 @@
+.tooltip {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  text-align: left;
+  color: #25283d;
+  border: 2px solid #25283d;
+  background-color: #efd9ce;
+}
+
+.tooltipInner {
+  position: relative;
+  padding: 40px 20px 20px 20px;
+  min-width: 300px;
+}
+
+.closeButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: 2px solid #25283d;
+  border-bottom: 2px solid #25283d;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background-color: #25283d;
+  color: #ffffff;
+}
+
+.tooltip .tooltipRow {
+  line-height: 25px;
+  font-size: 18px;
+}
+
+.tooltip h3 {
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px solid #25283d;
+  margin-top: 0;
+  display: block;
+}
+
+.tooltip .tooltipRow.tooltipLastRow {
+  margin-top: 10px;
+}
+
+.tooltip .tooltipLink {
+  font-size: 18px;
+  color: #25283d;
+}
+
+.tooltipRowLabel {
+  margin-right: 10px;
+  min-width: 140px;
+  display: inline-block;
+}
+
+.tooltipRowValue {
+  font-weight: bold;
+}
+
+.tooltipRowValueWithImage {
+  margin-left: -5px;
+}
+
+.tooltipRowValueWithImage img {
+  margin-right: -5px;
+}

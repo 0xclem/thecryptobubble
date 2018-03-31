@@ -22,6 +22,7 @@ class BubbleChart extends Component {
     this.state = {
       width: window.innerWidth,
       height: window.innerHeight - 100,
+      selectedBubble: null,
     };
     this.handleResize = this.handleResize.bind(this);
   }
@@ -70,7 +71,7 @@ class BubbleChart extends Component {
   }
 
   drawChart() {
-    const { data } = this.props;
+    const { data, onBubbleClick } = this.props;
 
     const g = select(this.refs.circleContainer);
 
@@ -101,6 +102,8 @@ class BubbleChart extends Component {
       .attr('transform', function(d) {
         return 'translate(' + d.x + ',' + d.y + ')';
       })
+      .attr('cursor', 'pointer')
+      .on('click', onBubbleClick)
       .call(
         drag()
           .on('start', d => {
@@ -129,6 +132,7 @@ class BubbleChart extends Component {
       .style('text-anchor', 'middle')
       .style('fill', '#fff')
       .style('font-family', 'Arial')
+      .style('pointer-events', 'none')
       .style('font-size', d => {
         const r = rScale(parseFloat(d.market_cap_usd));
         return r > 16 ? 10 : 7;
@@ -139,7 +143,7 @@ class BubbleChart extends Component {
   }
 
   render() {
-    const { width, height } = this.state;
+    const { width, height, selectedBubble } = this.state;
     return (
       <div className="chartContainer">
         <svg width={width} height={height} ref="svg">
@@ -150,6 +154,7 @@ class BubbleChart extends Component {
             ref="circleContainer"
           />
         </svg>
+        <div />
       </div>
     );
   }
@@ -157,6 +162,7 @@ class BubbleChart extends Component {
 
 BubbleChart.propTypes = {
   data: PropTypes.array.isRequired,
+  onBubbleClick: PropTypes.func.isRequired,
 };
 
 export default BubbleChart;

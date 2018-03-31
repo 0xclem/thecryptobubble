@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './root.css';
 import api from '../../api';
 import BubbleChart from '../../components/bubble-chart';
+import Tooltip from '../../components/tooltip';
+import { humanizeBigNumber } from '../../helpers';
 
 class Root extends Component {
   constructor() {
@@ -9,9 +11,22 @@ class Root extends Component {
     this.state = {
       coins: null,
       global: null,
+      sort: 'marketcap',
+      selectedCoin: null,
     };
     this.interval = null;
     this.getData = this.getData.bind(this);
+    this.toggleSort = this.toggleSort.bind(this);
+    this.handleBubbleClick = this.handleBubbleClick.bind(this);
+    this.handleCloseButtonClick = this.handleCloseButtonClick.bind(this);
+  }
+
+  handleBubbleClick(coin) {
+    this.setState({ selectedCoin: coin });
+  }
+
+  handleCloseButtonClick() {
+    this.setState({ selectedCoin: null });
   }
 
   getData() {
@@ -30,25 +45,54 @@ class Root extends Component {
 
   renderChart() {
     const { coins } = this.state;
-    return coins ? <BubbleChart data={coins} /> : null;
+    return coins ? (
+      <BubbleChart data={coins} onBubbleClick={this.handleBubbleClick} />
+    ) : null;
   }
 
-  humanizeNumber(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  toggleSort(sort) {
+    return e => {
+      this.setState({ sort });
+    };
+  }
+
+  renderButtons() {
+    const { sort } = this.state;
+    return (
+      <div className="buttonRow">
+        <div
+          className={`button ${sort === 'marketcap' ? 'active' : ''}`}
+          onClick={this.toggleSort('marketcap')}
+        >
+          Market Cap
+        </div>
+        <div
+          className={`button ${sort === 'evolution' ? 'active' : ''}`}
+          onClick={this.toggleSort('evolution')}
+        >
+          Evolution
+        </div>
+      </div>
+    );
   }
 
   render() {
-    const { coins, global } = this.state;
+    const { coins, global, selectedCoin } = this.state;
     if (coins && global) {
       return (
         <div className="Root">
           <h1 className="RootHeadline">The crypto bubble</h1>
           <h2 className="RootSubHeadline">
-            Total Market Cap: ${this.humanizeNumber(
-              global.total_market_cap_usd
-            )}
+            Total Market Cap: ${humanizeBigNumber(global.total_market_cap_usd)}
           </h2>
-          {this.renderChart()}
+          {this.renderButtons()}
+          <div className="rootContent">
+            {this.renderChart()}
+            <Tooltip
+              coin={selectedCoin}
+              onCloseButtonClick={this.handleCloseButtonClick}
+            />
+          </div>
           <div className="legend">
             <div className="legendRow">
               <div className="legendBubble" />
