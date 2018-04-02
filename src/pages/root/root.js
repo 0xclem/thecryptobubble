@@ -3,7 +3,7 @@ import './root.css';
 import api from '../../api';
 import BubbleChart from '../../components/bubble-chart';
 import Tooltip from '../../components/tooltip';
-import { humanizeBigNumber } from '../../helpers';
+import { humanizeNumber } from '../../helpers';
 
 class Root extends Component {
   constructor() {
@@ -86,10 +86,10 @@ class Root extends Component {
     const { coins, global, selectedCoin } = this.state;
     if (coins && global) {
       return (
-        <div className="Root">
-          <h1 className="RootHeadline">The crypto bubble</h1>
-          <h2 className="RootSubHeadline">
-            Total Market Cap: ${humanizeBigNumber(global.total_market_cap_usd)}
+        <div className="root">
+          <h1 className="rootHeadline">The crypto bubble</h1>
+          <h2 className="rootSubHeadline">
+            Total Market Cap: ${humanizeNumber(global.total_market_cap_usd)}
           </h2>
           {this.renderButtons()}
           <div className="rootContent">

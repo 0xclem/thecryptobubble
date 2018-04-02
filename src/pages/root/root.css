@@ -1,15 +1,11 @@
-.Root {
+.root {
   text-align: center;
   font-family: 'Fjalla One', sans-serif;
   width: 1200px;
   margin: 0 auto;
 }
 
-.rootContent {
-  position: relative;
-}
-
-.RootHeadline {
+.rootHeadline {
   text-transform: uppercase;
   color: #25283d;
   margin-bottom: 0;
@@ -18,9 +14,13 @@
   margin: 20px 0 0 0;
 }
 
-.RootSubHeadline {
+.rootSubHeadline {
   color: #25283d;
   margin: 10px 0;
+}
+
+.rootContent {
+  position: relative;
 }
 
 .buttonRow {

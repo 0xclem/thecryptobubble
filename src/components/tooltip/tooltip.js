@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { humanizeNumber, humanizeBigNumber } from '../../helpers';
+import { humanizeNumber } from '../../helpers';
 import './tooltip.css';
 
 const Tooltip = ({ coin, onCloseButtonClick }) => {
@@ -20,7 +20,7 @@ const Tooltip = ({ coin, onCloseButtonClick }) => {
         <div className="tooltipRow">
           <span className="tooltipRowLabel">Market Cap: </span>
           <span className="tooltipRowValue">
-            ${humanizeBigNumber(coin.market_cap_usd)}
+            ${humanizeNumber(coin.market_cap_usd)}
           </span>
         </div>
         <div className="tooltipRow">
