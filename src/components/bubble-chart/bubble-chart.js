@@ -16,35 +16,34 @@ import { drag } from 'd3-drag';
 import { interpolate } from 'd3-interpolate';
 import { transition } from 'd3-transition';
 
+const WIDTH = 1200;
+const HEIGHT = 768;
+
 class BubbleChart extends Component {
   constructor() {
     super();
     this.state = {
-      width: window.innerWidth,
-      height: window.innerHeight - 100,
       selectedBubble: null,
     };
-    this.handleResize = this.handleResize.bind(this);
   }
+
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize);
     this.drawChart();
   }
 
-  handleResize(WindowSize, event) {
-    this.setState({
-      width: window.innerWidth,
-      height: window.innerHeight - 50,
-    });
-  }
   componentDidUpdate() {
+    //Dirty hack. We basically blank the chart's nodes.
+    //A best way do it: Use D3 Enter, Update and Exit.
+    //Easy with a flat structure but harder with g wrappers for circle and text elements.
+    const targetEl = this.refs.circleContainer;
+    while (targetEl.firstChild) targetEl.removeChild(targetEl.firstChild);
     this.drawChart();
   }
 
   getBubbleScale(caps) {
     return scaleLog(caps)
       .domain([min(caps), max(caps)])
-      .range([10, 100]);
+      .range([10, 90]);
   }
 
   tick(node, d) {
@@ -72,9 +71,7 @@ class BubbleChart extends Component {
 
   drawChart() {
     const { data, onBubbleClick } = this.props;
-
     const g = select(this.refs.circleContainer);
-
     const caps = data.map(coin => parseFloat(coin.market_cap_usd));
     const rScale = this.getBubbleScale(caps);
 
@@ -91,18 +88,19 @@ class BubbleChart extends Component {
       .force('x', forceX().strength(0.05))
       .force('y', forceY().strength(0.05))
       .force('tick', d => {
-        this.tick(node, d);
+        this.tick(nodes, d);
       });
-    const node = g
+
+    const nodes = g
       .selectAll('.node')
       .data(data)
       .enter()
       .append('g')
       .attr('class', 'node')
+      .attr('cursor', 'pointer')
       .attr('transform', function(d) {
         return 'translate(' + d.x + ',' + d.y + ')';
       })
-      .attr('cursor', 'pointer')
       .on('click', onBubbleClick)
       .call(
         drag()
@@ -115,7 +113,7 @@ class BubbleChart extends Component {
           })
       );
 
-    const circles = node
+    nodes
       .append('circle')
       .attr('r', d => {
         return rScale(parseFloat(d.market_cap_usd));
@@ -124,7 +122,7 @@ class BubbleChart extends Component {
         return parseFloat(d.percent_change_24h) > 0 ? '#07BEB8' : '#25283D';
       });
 
-    node
+    nodes
       .append('text')
       .attr('dy', function(d) {
         return 2;
@@ -145,11 +143,11 @@ class BubbleChart extends Component {
   render() {
     const { width, height, selectedBubble } = this.state;
     return (
-      <div className="chartContainer">
-        <svg width={width} height={height} ref="svg">
+      <div>
+        <svg width={WIDTH} height={HEIGHT} ref="svg">
           <g
             style={{
-              transform: `translate(${width / 2}px , ${height / 2}px)`,
+              transform: `translate(${WIDTH / 2}px , ${HEIGHT / 2}px)`,
             }}
             ref="circleContainer"
           />

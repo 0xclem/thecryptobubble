@@ -36,7 +36,7 @@ class Root extends Component {
   }
   componentDidMount() {
     this.getData();
-    // this.interval = setInterval(this.getData, 1000 * 60);
+    this.interval = setInterval(this.getData, 1000 * 60);
   }
 
   componentWillUnmount() {
@@ -93,24 +93,25 @@ class Root extends Component {
               onCloseButtonClick={this.handleCloseButtonClick}
             />
           </div>
-          <div className="legend">
-            <div className="legendRow">
-              <div className="legendBubble" />
-              <div>Up last 24 hours </div>
-            </div>
-            <div className="legendRow">
-              <div className="legendBubble blue" />
-              <div>Down last 24 hours </div>
-            </div>
-          </div>
           <div className="footer">
-            <span>Made with love in Sydney</span>
-            <a href="https://www.linkedin.com/in/clementbalestrat/">
-              <img height="25" src="/img/linkedin.svg" />
-            </a>
-            <a href="https://github.com/clementbalestrat/thecryptobubble">
-              <img height="25" src="/img/github.svg" />
-            </a>
+            <div className="legend">
+              <div className="legendRow">
+                <div className="legendBubble" />
+                <div>Up last 24 hours </div>
+              </div>
+              <div className="legendRow">
+                <div className="legendBubble blue" />
+                <div>Down last 24 hours </div>
+              </div>
+            </div>
+            <div className="links">
+              <a href="https://www.linkedin.com/in/clementbalestrat/">
+                <img height="25" src="/img/linkedin.svg" />
+              </a>
+              <a href="https://github.com/clementbalestrat/thecryptobubble">
+                <img height="25" src="/img/github.svg" />
+              </a>
+            </div>
           </div>
         </div>
       );
