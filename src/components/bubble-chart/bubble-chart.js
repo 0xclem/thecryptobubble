@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './bubble-chart.css';
 import { select, event } from 'd3-selection';
-import { scaleLog } from 'd3-scale';
+import { scaleLog, scaleLinear } from 'd3-scale';
 import { max, min } from 'd3-array';
 import {
   forceSimulation,
@@ -32,18 +31,25 @@ class BubbleChart extends Component {
   }
 
   componentDidUpdate() {
-    //Dirty hack. We basically blank the chart's nodes.
-    //A best way do it: Use D3 Enter, Update and Exit.
-    //Easy with a flat structure but harder with g wrappers for circle and text elements.
-    const targetEl = this.refs.circleContainer;
-    while (targetEl.firstChild) targetEl.removeChild(targetEl.firstChild);
-    this.drawChart();
+    const { needsRedraw } = this.props;
+    if (needsRedraw) {
+      //Dirty hack. We basically blank the chart's nodes.
+      //A best way do it: Use D3 Enter, Update and Exit.
+      //Easy with a flat structure but harder with g wrappers for circle and text elements.
+      const targetEl = this.refs.circleContainer;
+      while (targetEl.firstChild) targetEl.removeChild(targetEl.firstChild);
+      this.drawChart();
+    }
   }
 
   getBubbleScale(caps) {
-    return scaleLog(caps)
+    const { sortBy } = this.props;
+    //We can't Log Scale negative values so we have to use Linear if sortBy = last24h
+    const scaleFunc = sortBy === 'last24h' ? scaleLinear : scaleLog;
+    const scaleRange = sortBy === 'last24h' ? [8, 70] : [10, 90];
+    return scaleFunc(caps)
       .domain([min(caps), max(caps)])
-      .range([10, 90]);
+      .range(scaleRange);
   }
 
   tick(node, d) {
@@ -70,9 +76,11 @@ class BubbleChart extends Component {
   }
 
   drawChart() {
-    const { data, onBubbleClick } = this.props;
+    const { data, onBubbleClick, sortBy } = this.props;
+    const sortingAttribute =
+      sortBy === 'last24h' ? 'percent_change_24h' : 'market_cap_usd';
     const g = select(this.refs.circleContainer);
-    const caps = data.map(coin => parseFloat(coin.market_cap_usd));
+    const caps = data.map(coin => parseFloat(coin[sortingAttribute]));
     const rScale = this.getBubbleScale(caps);
 
     var simulation = forceSimulation()
@@ -81,7 +89,7 @@ class BubbleChart extends Component {
       .force(
         'collide',
         forceCollide(function(d) {
-          return rScale(d.market_cap_usd) + 2;
+          return rScale(d[sortingAttribute]) + 2;
         }).iterations(16)
       )
       .force('gravity', forceManyBody(0))
@@ -116,7 +124,7 @@ class BubbleChart extends Component {
     nodes
       .append('circle')
       .attr('r', d => {
-        return rScale(parseFloat(d.market_cap_usd));
+        return rScale(parseFloat(d[sortingAttribute]));
       })
       .style('fill', function(d) {
         return parseFloat(d.percent_change_24h) > 0 ? '#07BEB8' : '#25283D';
@@ -132,7 +140,7 @@ class BubbleChart extends Component {
       .style('font-family', 'Arial')
       .style('pointer-events', 'none')
       .style('font-size', d => {
-        const r = rScale(parseFloat(d.market_cap_usd));
+        const r = rScale(parseFloat(d[sortingAttribute]));
         return r > 16 ? 10 : 7;
       })
       .text(function(d) {
@@ -141,7 +149,7 @@ class BubbleChart extends Component {
   }
 
   render() {
-    const { width, height, selectedBubble } = this.state;
+    const { selectedBubble } = this.state;
     return (
       <div>
         <svg width={WIDTH} height={HEIGHT} ref="svg">
@@ -161,6 +169,8 @@ class BubbleChart extends Component {
 BubbleChart.propTypes = {
   data: PropTypes.array.isRequired,
   onBubbleClick: PropTypes.func.isRequired,
+  needsRedraw: PropTypes.bool.isRequired,
+  sortBy: PropTypes.string.isRequired,
 };
 
 export default BubbleChart;

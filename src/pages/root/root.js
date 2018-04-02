@@ -12,6 +12,7 @@ class Root extends Component {
       coins: null,
       global: null,
       sort: 'marketcap',
+      needsRedraw: true,
       selectedCoin: null,
     };
     this.interval = null;
@@ -22,7 +23,7 @@ class Root extends Component {
   }
 
   handleBubbleClick(coin) {
-    this.setState({ selectedCoin: coin });
+    this.setState({ selectedCoin: coin, needsRedraw: false });
   }
 
   handleCloseButtonClick() {
@@ -31,7 +32,7 @@ class Root extends Component {
 
   getData() {
     api().then(([coins, global]) => {
-      this.setState({ coins, global });
+      this.setState({ coins, global, needsRedraw: true });
     });
   }
   componentDidMount() {
@@ -44,15 +45,20 @@ class Root extends Component {
   }
 
   renderChart() {
-    const { coins } = this.state;
+    const { coins, needsRedraw, sort } = this.state;
     return coins ? (
-      <BubbleChart data={coins} onBubbleClick={this.handleBubbleClick} />
+      <BubbleChart
+        needsRedraw={needsRedraw}
+        data={coins}
+        onBubbleClick={this.handleBubbleClick}
+        sortBy={sort}
+      />
     ) : null;
   }
 
   toggleSort(sort) {
     return e => {
-      this.setState({ sort });
+      this.setState({ sort, needsRedraw: true });
     };
   }
 
@@ -67,10 +73,10 @@ class Root extends Component {
           Market Cap
         </div>
         <div
-          className={`button ${sort === 'evolution' ? 'active' : ''}`}
-          onClick={this.toggleSort('evolution')}
+          className={`button ${sort === 'last24h' ? 'active' : ''}`}
+          onClick={this.toggleSort('last24h')}
         >
-          Evolution
+          Last 24h
         </div>
       </div>
     );
